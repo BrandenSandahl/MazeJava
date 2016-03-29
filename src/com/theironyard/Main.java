@@ -1,15 +1,14 @@
 package com.theironyard;
 
-import jdk.nashorn.internal.runtime.ECMAException;
-
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.SynchronousQueue;
 import java.util.stream.Collectors;
 
 public class Main {
 
-    static final int SIZE = 10;
+    private static final int SIZE = 3;
+    private static boolean ranOnce = false;
+    private static boolean hitDeadEnd = false;
 
     static ArrayList<ArrayList<Room>> createRooms() {
         ArrayList<ArrayList<Room>> rooms = new ArrayList<>();
@@ -54,6 +53,10 @@ public class Main {
             int index = r.nextInt(neighbors.size());
             return neighbors.get(index);
         }
+        if (!hitDeadEnd) {
+            rooms.get(row).get(col).isEnd = true;
+            hitDeadEnd = true;
+        }
         return null;
     }
 
@@ -70,13 +73,17 @@ public class Main {
         else if (newRoom.col < oldRoom.col) {
             newRoom.hasRight = false;
         }
-        //going Raplh
+        //going Roger
         else if (newRoom.col > oldRoom.col) {
             oldRoom.hasRight = false;
         }
     }
 
     static boolean createMaze(ArrayList<ArrayList<Room>> rooms, Room room) {
+        if (!ranOnce) {
+            room.isStart = true;
+            ranOnce = true;
+        }
         room.wasVisitied = true;
         Room nextRoom = randomNeighbor(rooms, room.row, room.col);
         if (nextRoom == null) {
@@ -90,9 +97,8 @@ public class Main {
         return true;
     }
 
-
     public static void main(String[] args) {
-	    ArrayList<ArrayList<Room>> rooms = createRooms();
+        ArrayList<ArrayList<Room>> rooms = createRooms();
         createMaze(rooms, rooms.get(0).get(0));
         for (ArrayList<Room> row : rooms) {
             System.out.print(" _");
@@ -101,7 +107,12 @@ public class Main {
         for (ArrayList<Room> row : rooms) {
             System.out.print("|");
             for (Room room : row) {
-                if (room.hasBottom) {
+
+                if (room.isStart) {
+                    System.out.print("o");
+                } else if (room.isEnd){
+                    System.out.print("x");
+                } else if (room.hasBottom){
                     System.out.print("_");
                 } else {
                     System.out.print(" ");
