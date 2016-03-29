@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class Main {
 
-    private static final int SIZE = 3;
+    private static final int SIZE = 10;
     private static boolean ranOnce = false;
     private static boolean hitDeadEnd = false;
 
